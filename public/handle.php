@@ -20,7 +20,7 @@ $client = new Client(
 $verification = $client->verify
     ->v2
     // service id of the verification service we created
-    ->services("VA540788dee8ec0f663d6e022f16893928")
+    ->services("<YOUR TWILIO VERIFY SERVICE SID>")
     ->verifications
     ->create($email, "email", [
             'channelConfiguration' => [

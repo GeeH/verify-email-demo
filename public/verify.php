@@ -20,15 +20,21 @@ $client = new Client($sid, $token);
 try {
     $verification = $client->verify
         ->v2
-        // service id of the verification service we created
-        ->services("VA540788dee8ec0f663d6e022f16893928")
+        // service id of the verification service we created - we'll probably want this
+        // stored in a config file somewhere
+        ->services("<YOUR TWILIO VERIFY SERVICE SID>")
         ->verificationChecks
         ->create($verifyToken, ["to" => $email]);
     // update your user in the database to set the verified flag
 
-    $message = 'Thanks for validating your email, you can now login';
-} catch (Twilio\Exceptions\RestException $e) {
-    $message = 'Sorry, the code you entered is not valid';
+    if ($verification->status === 'approved') {
+        $message = 'Thanks for validating your email, you can now login.';
+        unset($_SESSION['email_address_verify']);
+    } else {
+        $message = 'Sorry, the code you entered is not valid';
+    }
+} catch (\Twilio\Exceptions\RestException $e) {
+    $message = 'Sorry, the code you entered may have expired, <a href="register.html">Click Here</a> to resend the code.';
 }
 ?>
 <!DOCTYPE html>
